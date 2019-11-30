@@ -69,7 +69,11 @@ where
 
 impl<DK, C> Decrypt<DK, C, u64> for Paillier
 where
-    for<'c, 'p> Self: Decrypt<DK, RawCiphertext<'c>, RawPlaintext<'p>>,
+    for<'c, 'p> Self: Decrypt<
+                      DK,
+                      RawCiphertext<'c>,
+                      RawPlaintext<'p>,
+                  >,
     C: Borrow<EncodedCiphertext<u64>>,
 {
     fn decrypt(dk: &DK, c: C) -> u64 {
@@ -80,7 +84,11 @@ where
 
 impl<DK, C> Decrypt<DK, C, Vec<u64>> for Paillier
 where
-    for<'c, 'p> Self: Decrypt<DK, RawCiphertext<'c>, RawPlaintext<'p>>,
+    for<'c, 'p> Self: Decrypt<
+                      DK,
+                      RawCiphertext<'c>,
+                      RawPlaintext<'p>,
+                  >,
     C: Borrow<EncodedCiphertext<Vec<u64>>>,
 {
     fn decrypt(dk: &DK, c: C) -> Vec<u64> {
@@ -118,9 +126,53 @@ where
     fn add(ek: &EK, c1: C1, c2: C2) -> EncodedCiphertext<Vec<u64>> {
         let c1 = c1.borrow();
         let c2 = c2.borrow();
-        assert_eq!(c1.components, c2.components); // TODO[Morten] expand one if needed
+assert_eq!(c1.components, c2.components); // TODO[Morten] expand one if needed
 
         let d = Self::add(
+            ek,
+            RawCiphertext::from(&c1.raw),
+            RawCiphertext::from(&c2.raw),
+        );
+        EncodedCiphertext {
+            raw: d.into(),
+            components: c1.components,
+            _phantom: PhantomData,
+        }
+    }
+}
+
+impl<EK, C1, C2> Sub<EK, C1, C2, EncodedCiphertext<u64>> for Paillier
+where
+    for<'c1, 'c2, 'd> Self: Sub<EK, RawCiphertext<'c1>, RawCiphertext<'c2>, RawCiphertext<'d>>,
+    C1: Borrow<EncodedCiphertext<u64>>,
+    C2: Borrow<EncodedCiphertext<u64>>,
+{
+    fn sub(ek: &EK, c1: C1, c2: C2) -> EncodedCiphertext<u64> {
+        let d = Self::sub(
+            ek,
+            RawCiphertext::from(&c1.borrow().raw),
+            RawCiphertext::from(&c2.borrow().raw),
+        );
+        EncodedCiphertext {
+            raw: d.into(),
+            components: 1,
+            _phantom: PhantomData,
+        }
+    }
+}
+
+impl<EK, C1, C2> Sub<EK, C1, C2, EncodedCiphertext<Vec<u64>>> for Paillier
+where
+    for<'c1, 'c2, 'd> Self: Sub<EK, RawCiphertext<'c1>, RawCiphertext<'c2>, RawCiphertext<'d>>,
+    C1: Borrow<EncodedCiphertext<Vec<u64>>>,
+    C2: Borrow<EncodedCiphertext<Vec<u64>>>,
+{
+    fn sub(ek: &EK, c1: C1, c2: C2) -> EncodedCiphertext<Vec<u64>> {
+        let c1 = c1.borrow();
+        let c2 = c2.borrow();
+assert_eq!(c1.components, c2.components); // TODO[Morten] expand one if needed
+
+        let d = Self::sub(
             ek,
             RawCiphertext::from(&c1.raw),
             RawCiphertext::from(&c2.raw),

@@ -41,12 +41,18 @@ pub struct Paillier;
 
 #[cfg(feature = "useramp")]
 pub use arithimpl::rampimpl::BigInt;
+#[cfg(feature = "useramp")]
+pub use arithimpl::rampimpl::BigIntSign;
 
 #[cfg(feature = "useframp")]
 pub use arithimpl::frampimpl::BigInt;
+#[cfg(feature = "useframp")]
+pub use arithimpl::frampimpl::BigIntSign;
 
 #[cfg(feature = "usegmp")]
 pub use arithimpl::gmpimpl::BigInt;
+#[cfg(feature = "usegmp")]
+pub use arithimpl::gmpimpl::BigIntSign;
 
 /// Keypair from which encryption and decryption keys can be derived.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -82,7 +88,7 @@ pub struct MinimalDecryptionKey {
 /// Public encryption key.
 #[derive(Clone, Debug, PartialEq)]
 pub struct EncryptionKey {
-    pub n: BigInt,  // the modulus
+    pub n: BigInt, // the modulus
     pub nn: BigInt, // the modulus squared
 }
 

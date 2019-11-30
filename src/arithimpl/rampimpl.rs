@@ -100,5 +100,12 @@ impl BitManipulation for ramp::Int {
         self.bit(bit as u32)
     }
 }
+#[derive(Clone, Copy, Hash, Debug)]
+pub enum Sign {
+    Negative = -1i32,
+    Zero = 0i32,
+    Positive = 1i32,
+}
 
 pub type BigInt = ramp::Int;
+pub type BigIntSign = Sign;

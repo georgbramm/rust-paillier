@@ -77,5 +77,12 @@ impl BitManipulation for ramp::Int {
         self.set_bit(bit as u32, bit_val);
     }
 }
+#[derive(Clone, Copy, Hash, Debug)]
+pub enum Sign {
+    Negative = -1i32,
+    Zero = 0i32,
+    Positive = 1i32,
+}
 
 pub type BigInt = framp::Int;
+pub type BigIntSign = Sign;

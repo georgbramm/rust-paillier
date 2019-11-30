@@ -3,6 +3,7 @@
 extern crate gmp;
 
 use self::gmp::mpz::Mpz;
+use self::gmp::sign::Sign;
 use super::traits::*;
 use rand::prelude::*;
 
@@ -147,3 +148,4 @@ impl BitManipulation for Mpz {
 }
 
 pub type BigInt = Mpz;
+pub type BigIntSign = Sign;

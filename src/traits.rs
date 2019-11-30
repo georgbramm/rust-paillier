@@ -2,9 +2,9 @@
 
 /// Secure generation of fresh key pairs.
 pub trait KeyGeneration<KP> {
-    /// Generate fresh key pair with currently recommended security level (2048 bit modulus).
+    /// Generate fresh key pair with currently recommended security level (4096 bit modulus).
     fn keypair() -> KP {
-        Self::keypair_with_modulus_size(2048)
+        Self::keypair_with_modulus_size(4096)
     }
 
     /// Generate fresh key pair with security level specified as the `bit_length` of the modulus.
@@ -46,6 +46,13 @@ pub trait Add<EK, CT1, CT2, CT> {
     /// Homomorphically combine ciphertexts `c1` and `c2` to obtain a ciphertext containing
     /// the sum of the two underlying plaintexts, reduced modulus `n` from `ek`.
     fn add(ek: &EK, c1: CT1, c2: CT2) -> CT;
+}
+
+/// subtraction of two ciphertexts.
+pub trait Sub<EK, CT1, CT2, CT> {
+    /// Homomorphically combine ciphertexts `c1` and `c2` to obtain a ciphertext containing
+    /// the subtraction of the two underlying plaintexts, reduced modulus `n` from `ek`.
+    fn sub(ek: &EK, c1: CT1, c2: CT2) -> CT;
 }
 
 /// Multiplication of ciphertext with plaintext.
