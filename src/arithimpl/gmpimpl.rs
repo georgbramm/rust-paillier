@@ -133,6 +133,28 @@ impl ConvertFrom<Mpz> for i64 {
     }
 }
 
+impl ConvertFrom<Mpz> for f64 {
+    fn _from(x: &Mpz) -> f64 {
+        let foo: Option<u64> = x.into();
+        (foo.unwrap() as f64) / 10000000_f64
+    }
+}
+/*
+//  TODO !!!!!!!!!!!
+impl ConvertFrom<Mpz> for f64 {
+    fn _from(x: &Mpz) -> f64 {
+        let foo: Option<u64> = x.into();
+        foo.unwrap() as i64
+    }
+}
+
+impl ConvertFrom<f64> for Mpz {
+    fn _from(x: f64) -> Mpz {
+        let foo: Option<u64> = x.into();
+        foo.unwrap() as i64
+    }
+}
+*/
 impl BitManipulation for Mpz {
     fn set_bit(self: &mut Self, bit: usize, bit_val: bool) {
         if bit_val {

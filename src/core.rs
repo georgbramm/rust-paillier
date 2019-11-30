@@ -478,7 +478,8 @@ impl<'c, 'm, 'd> Sub<EncryptionKey, RawCiphertext<'c>, RawPlaintext<'m>, RawCiph
     fn sub(ek: &EncryptionKey, c: RawCiphertext<'c>, m: RawPlaintext<'m>) -> RawCiphertext<'d> {
         let c1 = c.0.borrow() as &BigInt;
         let c2 = (m.0.borrow() as &BigInt * &ek.n + 1) % &ek.nn;
-        let d = (c1 * BigInt::modpow(&c2, &BigInt::from(-1), &ek.nn.clone())) % &ek.nn;
+        let _pow = BigInt::modinv(&c2, &ek.nn.clone());
+        let d = (c1 * _pow) % &ek.nn;
         RawCiphertext(Cow::Owned(d))
     }
 }
@@ -488,7 +489,8 @@ impl<'c, 'm, 'd> Sub<EncryptionKey, RawPlaintext<'m>, RawCiphertext<'c>, RawCiph
     fn sub(ek: &EncryptionKey, m: RawPlaintext<'m>, c: RawCiphertext<'c>) -> RawCiphertext<'d> {
         let c1 = (m.0.borrow() as &BigInt * &ek.n + 1) % &ek.nn;
         let c2 = c.0.borrow() as &BigInt;
-        let d = (c1 * BigInt::modpow(&c2, &BigInt::from(-1), &ek.nn.clone())) % &ek.nn;
+        let _pow = BigInt::modinv(&c2, &ek.nn.clone());
+        let d = (c1 * _pow) % &ek.nn;
         RawCiphertext(Cow::Owned(d))
     }
 }
@@ -672,7 +674,7 @@ mod tests {
         let m2 = RawPlaintext::from(BigInt::from(-25));
         let c2 = Paillier::encrypt(&ek, m2);
 
-        let c = Paillier::sub(&ek, c1, c2);
+        let c = Paillier::add(&ek, c1, c2);
         let m = Paillier::decrypt(&dk, c);
         assert_eq!(m, BigInt::from(-35).into());
     }
@@ -681,28 +683,38 @@ mod tests {
     fn test_correct_mul_with_neg_param() {
         let (ek, dk) = test_keypair().keys();
 
-        let m1 = RawPlaintext::from(BigInt::from(100));
+        let m1 = RawPlaintext::from(BigInt::from(-100));
         let c1 = Paillier::encrypt(&ek, m1);
-        let m2 = RawPlaintext::from(BigInt::from(-25));
-        let c2 = Paillier::encrypt(&ek, m2);
 
-        let c = Paillier::sub(&ek, c1, c2);
+        let c = Paillier::mul(&ek, c1, RawPlaintext::from(BigInt::from(25)));
         let m = Paillier::decrypt(&dk, c);
         assert_eq!(m, BigInt::from(-2500).into());
     }
-    /*
+
     #[test]
-    fn test_negative_subtraction() {
+    fn test_subtraction_with_plaintext1() {
         let (ek, dk) = test_keypair().keys();
 
-        let m1 = RawPlaintext::from(BigInt::from(10));
-        let c1 = Paillier::encrypt(&ek, m1);
-        let m2 = RawPlaintext::from(BigInt::from(-5));
+        let m1 = RawPlaintext::from(BigInt::from(50));
+        let m2 = RawPlaintext::from(BigInt::from(15));
         let c2 = Paillier::encrypt(&ek, m2);
 
-        let c = Paillier::sub(&ek, c1, c2);
+        let c = Paillier::sub(&ek, m1, c2);
         let m = Paillier::decrypt(&dk, c);
-        assert_eq!(m, BigInt::from(15).into());
+        assert_eq!(m, BigInt::from(35).into());
+    }
+
+    #[test]
+    fn test_subtraction_with_plaintext2() {
+        let (ek, dk) = test_keypair().keys();
+
+        let m1 = RawPlaintext::from(BigInt::from(50));
+        let c1 = Paillier::encrypt(&ek, m1);
+        let m2 = RawPlaintext::from(BigInt::from(15));
+
+        let c = Paillier::sub(&ek, c1, m2);
+        let m = Paillier::decrypt(&dk, c);
+        assert_eq!(m, BigInt::from(35).into());
     }
 
     #[test]
@@ -718,7 +730,7 @@ mod tests {
         let m = Paillier::decrypt(&dk, c);
         assert_eq!(m, BigInt::from(-103).into());
     }
-*/
+
     #[test]
     fn correct_multiplication() {
         let (ek, dk) = test_keypair().keys();
@@ -732,10 +744,24 @@ mod tests {
         assert_eq!(m, BigInt::from(200).into());
     }
 
+    #[test]
+    fn large_numbers() {
+        let (ek, dk) = test_keypair().keys();
+
+        let m1 = RawPlaintext::from(BigInt::from(3372036854775800u64));
+        let c1 = Paillier::encrypt(&ek, m1);
+        let m2 = RawPlaintext::from(BigInt::from(3372036854775807u64));
+        let c2 = Paillier::encrypt(&ek, m2);
+
+        let c = Paillier::sub(&ek, c1, c2);
+        let m = Paillier::decrypt(&dk, c);
+        assert_eq!(m, BigInt::from(-7).into());
+    }
+
     #[cfg(feature = "keygen")]
     #[test]
     fn test_correct_keygen() {
-        let (ek, dk): (EncryptionKey, _) = Paillier::keypair_with_modulus_size(2048).keys();
+        let (ek, dk): (EncryptionKey, _) = Paillier::keypair_with_modulus_size(4096).keys();
 
         let m = RawPlaintext::from(BigInt::from(10));
         let c = Paillier::encrypt(&ek, m.clone()); // TODO avoid clone

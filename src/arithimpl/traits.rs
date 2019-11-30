@@ -45,7 +45,6 @@ use std::ops::{Add, Div, Mul, Neg, Rem, Shr, Sub};
 
 impl<I> ModPow for I
 where
-    // TODO clean up
     I: Clone + Sized,
     I: Zero + One + Neg<Output = I> + NumberTests,
     for<'a> &'a I: Mul<I, Output = I>,
@@ -77,7 +76,6 @@ where
 
 impl<I> EGCD for I
 where
-    // TODO clean up
     I: Clone,
     I: Sized,
     I: Zero + One,

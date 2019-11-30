@@ -91,6 +91,18 @@ impl ConvertFrom<ramp::Int> for i64 {
     }
 }
 
+impl ConvertFrom<ramp::Int> for f64 {
+    fn _from(x: &ramp::Int) -> f64 {
+        (u64::from(x) as f64) / 10000000_f64
+    }
+}
+
+impl ConvertFrom<f64> for ramp::Int {
+    fn _from(x: f64) -> ramp::Int {
+        ramp::Int::from((x * 10000000_f64) as u64)
+    }
+}
+
 impl BitManipulation for ramp::Int {
     fn set_bit(self: &mut Self, bit: usize, bit_val: bool) {
         self.set_bit(bit as u32, bit_val);
