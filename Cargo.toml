@@ -4,7 +4,8 @@ version = "0.2.1-alpha.0"
 authors = [
   "Mario Cornejo <murdix@gmail.com>",
   "Morten Dahl <mortendahlcs@gmail.com>",
-  "Mathieu Poumeyrol <mathieu.poumeyrol@snips.ai>"
+  "Mathieu Poumeyrol <mathieu.poumeyrol@snips.ai>",
+  "Georg Bramm <georg.bramm@aisec.fraunhofer.de>"
 ]
 description = "A pure-Rust implementation of the Paillier encryption scheme"
 keywords = [
@@ -14,14 +15,14 @@ keywords = [
   "secure-computation",
   "zero-knowledge",
 ]
-homepage = "https://github.com/mortendahl/rust-paillier"
-repository = "https://github.com/mortendahl/rust-paillier"
+homepage = "https://github.com/georgbramm/rust-paillier"
+repository = "https://github.com/georgbramm/rust-paillier"
 documentation = "https://docs.rs/paillier"
 license = "MIT/Apache-2.0"
 categories = ["cryptography"]
 
 [badges]
-travis-ci = { repository = "mortendahl/rust-paillier" }
+travis-ci = { repository = "georgbramm/rust-paillier" }
 
 [features]
 default = ["usegmp", "keygen", "proofs"]
@@ -41,7 +42,7 @@ serde_derive = "1.0"
 ramp = { version="0.5", optional=true }
 framp = { version="0.3", optional=true }
 rust-gmp = { version="0.5", optional=true }
-ring = { version="0.13", optional=true }
+ring = { version="0.16.11", optional=true }
 
 bit-vec = "0.5"
 

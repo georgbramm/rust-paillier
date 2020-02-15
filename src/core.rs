@@ -468,7 +468,7 @@ impl<'c1, 'c2, 'd> Sub<EncryptionKey, RawCiphertext<'c1>, RawCiphertext<'c2>, Ra
         c2: RawCiphertext<'c2>,
     ) -> RawCiphertext<'d> {
         let _pow = BigInt::modinv(c2.0.borrow() as &BigInt, &ek.nn.clone());
-        let d = (c1.0.borrow() as &BigInt * _pow) % &ek.nn;
+        let d = c1.0.borrow() as &BigInt * _pow % &ek.nn;
         RawCiphertext(Cow::Owned(d))
     }
 }
