@@ -25,7 +25,7 @@ categories = ["cryptography"]
 travis-ci = { repository = "georgbramm/rust-paillier" }
 
 [features]
-default = ["keygen", "proofs"]
+default = ["useramp", "keygen", "proofs"]
 keygen = []
 proofs = ["ring"]
 useramp = ["ramp"]
