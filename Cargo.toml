@@ -25,7 +25,7 @@ categories = ["cryptography"]
 travis-ci = { repository = "georgbramm/rust-paillier" }
 
 [features]
-default = ["useramp", "keygen"]
+default = ["useframp", "keygen"]
 keygen = []
 proofs = ["ring"]
 useramp = ["ramp"]
@@ -40,7 +40,7 @@ rayon = "1.0"
 serde = "1.0"
 serde_derive = "1.0"
 ramp = { version="0.5.3", optional=true }
-framp = { version="0.3", optional=true }
+framp = { version="0.3.7", optional=true }
 rust-gmp = { version="0.5", optional=true }
 ring = { version="0.16.11", optional=true }
 
